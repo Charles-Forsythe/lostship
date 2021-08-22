@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="trsemu-1.4.js"></script> 
+<head>
+<style>
+@font-face {
+    font-family: 'another_mans_treasure_mib_2Md';
+    src: url('anothermanstreasuremib2y-webfont.woff2') format('woff2'),
+         url('anothermanstreasuremib2y-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+p {
+ font-family: 'another_mans_treasure_mib_2Md';
+  font-size: 30px;
+  font-weight: 100;
+  color: white;
+  margin: 20px;
+  margin-left: 50px;
+  margin-right: 50px;
+  line-height: 40px;
+  }
+  
+  h1 {
+ font-family: 'another_mans_treasure_mib_2Md';
+  font-size: 30px;
+  color: white;
+  margin: 15px;
+  margin-top: 0px;
+  margin-bottom:25px;
+}
+
+    h2 {
+ font-family: 'another_mans_treasure_mib_2Md';
+  font-size: 20px;
+  color: white;
+  margin: 15px;}
+    
+  h3 {
+ font-family: 'another_mans_treasure_mib_2Md';
+  font-size: 75px;
+  color: white;
+  margin: 15px;
+  margin-bottom: 0px;
+ }
+   
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+a:link {
+  color: white;
+  text-decoration: none;
+  border: 2px solid white;
+  padding: 1px;}
+  
+a:visited {
+  color: white;
+  text-decoration: none;
+  border: 2px solid white;
+ padding: 1px;}
+
+a:hover {
+  color: black;
+  background-color: white;
+  text-decoration: none;
+  border: 2px solid white;
+  padding: 1px;}
+  
+  figure {
+  margin: 20px;
+  margin-top: 0px;
+  padding: 15px;
+  border: 4px solid white;
+      }
+  
+  figcaption {
+  font-family: 'another_mans_treasure_mib_2Md';
+   background-color: black;
+  color: white;
+  font-size: 25px;
+  font-weight: 100;
+  padding: 0px;
+  padding-top:14px;
+ 
+}
+ 
+ </style>
+<body style="background-color:black; border: 20px solid gray; padding: 20px;"
+onload="trsEmu.screen('scrn').button('btn').focus();"
+> 
+<h3><center>LOST SHIP ADVENTURE</center></h3>
+<h1><CENTER>A 1981 TRS-80 ADVENTURE GAME (SLIGHTLY REMASTERED FOR THIS CENTURY)</CENTER></h1>
+<p>The image below is not a screenshot. It's a playable version of ARCTIC ADVENTURE that works right in your browser, assuming you have a physical keyboard. </p>
+<p>Go ahead, press ENTER. then play. I'll wait.</p>
+<script>trsEmu.run('lost.bas')</script>
+<div id="scrn">
+  <canvas width="512" height="384" class="center" style="border: 16px solid black; outline: 6px solid white; background:black;"></canvas></div><br /><br />
+
+</body>
+<html>
