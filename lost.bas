@@ -1,5 +1,5 @@
 10 CLEAR 1500 : M$ = "ABCABCABCABC" : GOTO 20
-11 'Print with line breaks. Z$=string ZS=1 split scroll Z=2 no scroll
+11 'Print with line wrapping. Z$=string ZS=1 split scroll Z=2 no scroll
 13 ZL$="":IF POS(0) + LEN(Z$) < 64 THEN 16
 14 for T1 = (64-POS(0)) to 1 step -1:if MID$(Z$, T1, 1) <> " " then next t1:goto 16
 15 ZL$ = RIGHT$(Z$, LEN(Z$) - T1):Z$ = LEFT$(Z$, T1)
@@ -8,14 +8,24 @@
 18 if ZL$<>"" then Z$=ZL$:gosub 11:'I know how to use recursion now! -CF 2021
 19 return
 20 M=VARPTR(M$):M1=PEEK(M+1):M2=PEEK(M+2)
+21 CLS:PRINT@272,"The Programmer's Guild Presents:":
+22 PRINT "                   LOST   SHIP   ADVENTURE"
+23 PRINT
+24 PRINT "                      by  Charles Forsythe"
+25 PRINT
+26 PRINT "            Copyright 1980-2021 by Charles Forsythe"
+27 PRINT@978,"Released under MIT License";
+28 FORX=1TO10:IFC=152THENC=164ELSEIFC=164THENC=139ELSEC=152
+29 PRINT@0,STRING$(64,C);:PRINT@832,STRING$(64,C);:FORT=0TO13:PRINT@T*64,CHR$(C);:PRINT@T*64+63,CHR$(C);:NEXTT,X
 30 FOR T = 0 TO 11 : READ M : POKE T + (M2 * 256 + M1), M : NEXT : DATA 33, 128, 62, 17, 64, 62, 1, 128, 1, 237, 176, 201 
-90 CLS:R=24:O=29
+90 CLS:R=24:O=30:AL=30
 100 DIM ZL$(4):DIM RD$(R,2),OS$(3,2),DH$(R):IF PEEK(16396)=195 THEN D1=1:DEFUSR0=M2*256+M1 :ELSE POKE 16526,M1:POKE 16527,M2
-110 DIM O$(O),P(O):FOR T=1 TO 6:READ AD$(T):NEXT:AL=70:I$="X":I=VARPTR(I$):POKE I+1,197:POKE I+2,63
+110 DIM O$(O),P(O):FOR T=1 TO 6:READ AD$(T):NEXT:I$="X":I=VARPTR(I$):POKE I+1,197:POKE I+2,63
 120 FOR T=1 TO 3:READ OS$(T,1),OS$(T,2):NEXT:READ VH$:READ VI$:VH$=VH$+VI$:VI$="":'Don't do load game GOTO 1880
-130 CLS:PRINT@768,CHR$(168)CHR$(176)CHR$(178)CHR$(191)CHR$(177)CHR$(176)CHR$(148)"  LOST SHIP ADVENTURE"
-140 PRINTCHR$(172)CHR$(144)" "CHR$(191)" "CHR$(160)CHR$(156)"  BY CHARLES FORSYTHE":PRINT CHR$(130)STRING$(5,131)CHR$(129)
-150 PRINT@0,"<"STRING$(22,"-")"Lost Ship Adventure"STRING$(21,"-")">"
+130 CLS:PRINT@768,CHR$(168)CHR$(176)CHR$(178)CHR$(191)CHR$(177)CHR$(176)CHR$(148)"  Lost Ship Adventure"
+140 PRINTCHR$(172)CHR$(144)" "CHR$(191)" "CHR$(160)CHR$(156)"  by Charles Forsythe":PRINT CHR$(130)STRING$(5,131)CHR$(129)
+150 'PRINT@0,"<"STRING$(22,"-")"Lost Ship Adventure"STRING$(21,"-")">"
+151 PRINT@0,STRING$(22,CHR$(131)) " Lost Ship Adventure "STRING$(21,CHR$(131))
 160 FOR T=1 TO R:READ RD$(T,1),RD$(T,2):NEXT:FOR T=1 TO O:READ O$(T),P(T):NEXT:FOR T=1 TO R:READ DH$:RD$(T,2)=DH$+RD$(T,2):NEXT:Y1=1
 170 PRINT@64,STRING$(255,32):PRINT:PRINT:PRINT@64,"";:z$=RD$(Y1,1):zs=0:gosub 11
 180 ZS=2:PRINT@(320),"You see: ";:FOR T=1 TO O:IF P(T)<>Y1 THEN 200
@@ -23,7 +33,8 @@
 191 PRINT"  ";
 200 NEXT T:IF PEEK(16416)=72 THEN PRINT"Nothing special"CHR$(30) :ELSE PRINT CHR$(30)
 210 PRINT@448,"Obvious exits: ";:FOR T=1 TO 6:IF MID$(RD$(Y1,2),T,1)="1" THEN PRINT AD$(T)" ";:NEXT :ELSE NEXT
-220 PRINT@512,"<-------------------------------------------------------------->";
+220 'PRINT@512,"<-------------------------------------------------------------->";
+221 PRINT@512, STRING$(64, CHR$(131));
 230 PRINT@960,"---->";
 240 IF PEEK(14502)=3 THEN PRINT CHR$(15);:GOTO 1050 :ELSE PRINT CHR$(14);:FOR T=1 TO 20:A$=INKEY$:IF A$="" THEN NEXT :ELSE 260
 250 IF PEEK(14502)=3 THEN PRINT CHR$(15);:GOTO 1050 :ELSE PRINT CHR$(15);:FOR T=1 TO 20:A$=INKEY$:IF A$="" THEN NEXT:GOTO 240 :ELSE 260
@@ -41,15 +52,22 @@
 360 FOR T=1 TO LEN(VH$) STEP 6
 370 IF V$<> MID$(VH$,T,4) THEN NEXT:PRINT"I don't know how to "CHR$(34)LEFT$(I2$,NP-1)CHR$(34)" something.";:GOTO 911 :ELSE V=VAL(MID$(VH$,T+4,2)):VN=(T-1)/6+1
 380 N$=N$+STRING$(4-LEN(N$)," "):IF V=3 THEN 410 :ELSE IF VN=22 THEN 440
+385 if UP < 2 THEN 390 'ELSE the pirate is stalking you!
+386 UP = UP + 1:IF UP < 6 THEN 390
+387 PRINT "The undead pirate fires his pistol, hitting you in the heart. You die instantly.":GOTO 2200
 390 IF N$="    "THEN N=0:GOTO 440 :ELSE IF N$="SUIT"THEN PRINT"You're wearing it and you can't reach the zipper.";:GOTO 911
 400 FOR T=1 TO O:IF N$<>LEFT$(O$(T),4) THEN NEXT:PRINT"I don't know what a "CHR$(34)MID$(I2$,NP+1)CHR$(34)" is.";:GOTO 911 :ELSE N=T:GOTO 420
 409 'GO
 410 if y1 = 8 and n$="STAI" print "The guard dog won't let you go that way.";:goto 911
-415 FOR T=7 TO LEN(RD$(Y1,2))STEP 2:IF LEFT$(N$,2)=MID$(RD$(Y1,2),T,2) THEN Y1=VAL(MID$(RD$(Y1,2),T+2,2)):GOTO 170 :ELSE NEXT:PRINT"You can't go that way yet...";:GOTO 911
+411 FOR T=7 TO LEN(RD$(Y1,2))STEP 2:IF LEFT$(N$,2)=MID$(RD$(Y1,2),T,2) THEN Y1=VAL(MID$(RD$(Y1,2),T+2,2)):ELSE NEXT:PRINT"You can't go that way yet...";:GOTO 911
+412 'NEW LOCATION
+413 IF UP>1 AND Y1>7 THEN PRINT "Somehow, the pirate is already there!";:P(20)=Y1:gosub 530
+415 IF UP=1 AND Y1=P(20) THEN PRINT "The pirate has risen, and he's holding a pistol!";:GOSUB 530
+419 GOTO 170 'END OF GO
 420 FOR T=7 TO LEN(O$(N)):IF MID$(O$(N),T,1)<>"*"THEN NEXT
 430 IF MID$(O$(N),T-1,1)="s" AND MID$(O$(N),T-2,1)<>"s" THEN HM=2 :ELSE HM=1
 440 ON V GOTO 930,1110,170,1140,1270,1340,1440,1530,1050,1570,1620,1760,1830,900,910,920
-450 IF Y1=1 OR Y1>7 THEN 480 :ELSE AL=AL-1:IF AL=0 THEN PRINT"You have run out of air in your tanks! You have drowned";:GOSUB 530:INPUT"Play again?";A$:IF LEFT$(A$,1)="Y"THEN RUN :ELSE CLS:END
+450 IF Y1=1 OR Y1>7 THEN 480 :ELSE AL=AL-1:IF AL=0 THEN PRINT"You have run out of air in your tanks! You have drowned";:GOSUB 530:GOTO 2100
 460 IF AL=1 THEN PRINT"Your air gauge reads in the red!";:GOSUB 530:GOTO 480
 470 IF AL<10 THEN PRINT"Your air gauge reads in the yellow...";:GOSUB 530
 480 MT=MT-1:IF MT<>0 THEN RETURN
@@ -85,23 +103,24 @@
 750 DATA SHIP05Sailing ship*A sign says its name is "S.S DEATH FLOWER",1, SUIT02Diving suit*You are wearing it
 760 DATA 1000, CORA05Coral*There is a strange formation of it here., 7, DOG 05Dog guarding south door*It growls when you come near. It looks hungry., 8
 770 DATA BONE02Bones*They are coral encrusted bones of an old sailor., -1, FEAT02Feather*It's a pen!, 11, EGGS05Gull eggs*Nothing special
-780 DATA 11, PAPE02Papers*They used to be maps but the ink has run, 10
-790 DATA MAP 06Map on table*It is nailed down with tacks. An "X" marks the ship's       position., 10
+780 DATA 11, "PAPE02Papers*They are maps, but the ink has run. They appear to be a plan to set sail for some kind of arctic adventure."
+790 DATA 10, MAP 06Map on table*It is nailed down with tacks. An "X" marks the ship's       position., 10
 800 DATA LADD06Ladder*It goes up through a trap door to the crow's nest., 9, DAGG03Jeweled dagger*Very good workmanship. The blade could chip through solid   rock!, 11
 810 DATA SACK05Rotting sacks*The putrid sacks lie in a heap in one corner, 13, MACH06Rusted machine*It Is Too Corroded To Identify
 820 DATA 13, NET 02Net*Small net for catching fish. it seems in good condition., 13
 830 DATA SAIL05X*X, -1, COUR05X*X, -1, BAG 03Bag*It's full of gold!!!, 13, BOOK02Book*X, 9
-840 DATA MANA05Fat manatee*There's something in it's mouth, -1, PIRA05Dead pirate*Let him rest in peace!, 22, ROCK05Rock*X, 23
+840 DATA MANA05Fat manatee*There's something in it's mouth, -1, PIRA05Dead pirate*It appears that he was shot through the heart!, 22, ROCK05Rock*X, 23
 850 DATA KEY 03Gold key*Nothing special, -2, SIGN06Sign stuck in sand*"TAKE TREASURES HERE AND SAY 'STORE'", 24
 860 DATA FISH02Fishes*They swim quickly, 14, SAND05Sand*It makes up the beach., 15, FLAG05Black flag*It's the skull and cross bones!
 870 DATA 8, SEAW05Seaweed*Nothing special, 14, STEA02Steak*It's all rotten. Not even a dog would eat it!, 8
 875 DATA STAI05Stairs to lower deck*The dog won't let you close enough to look!, 8
+876 DATA SCAB03Jeweled scabbard*The scabbard is for a dagger., -1
 880 DATA 000011, 111110,111100,111100,111100,111100,111110,100001,010010,100000,000001,000001,000010,100010,100000,111100,111100
 890 DATA 111100,111100,111100,111100,011000,000100,100000
 899 'QUIT
-900 PRINT"You quit with"TS"treasures. That's "TS*25"%.";:GOSUB 530:GOSUB 530:PRINT@896,"";:END
+900 PRINT"You quit with"TS"treasures. That's "TS*20"%.";:GOSUB 530:GOSUB 530:PRINT@896,"";:END
 909 'SCORE
-910 PRINT"You have"TS"treasures stored.";:IF TS=4 THEN GOSUB 530:PRINT "That's all there are.";
+910 PRINT"You have"TS"treasures stored.";:IF TS=5 THEN GOSUB 530:PRINT "That's all there are.";
 911 GOSUB 530:GOTO 230
 919 'HELP
 920 PRINT"Try examining things.";:GOTO 911
@@ -131,16 +150,22 @@
 1139 'EXAM
 1140 IF P(N)<>Y1 AND P(N)<>1000 THEN PRINT OS$(1,HM)" not here.";:GOTO 911
 1141 IF N=7 THEN 930
+1142 IF N=20 AND P(30)=-1 THEN PRINT "There is something under him!";:GOSUB 530:P(30)=Y1:GOTO 180
 1150 IF N=6 THEN O$(N)="PEN 02Pen*It's a pen!":GS=1
-1160 IF N=21 AND LEFT$(O$(21),1)="R" THEN O$(21)="CHES02Chest*It's a treasure chest, but it's locked.":GS=1
-1170 IF N<>18 THEN 1220' This shouldn't be needed :ELSE IF P(18)<>Y1 AND P(18)<>1000 THEN 1210
+1160 IF N<>21 OR LEFT$(O$(21),1)<>"R" THEN 1170
+1161 PRINT "On closer inspection, it's actually an crusty old chest.";:GOSUB 530
+1162 O$(21)="CHES02Chest*It's an old crusty chest, but it's locked.":O$(20)="PIRA05Undead Pirate*He's holding a pistol!":P(20)=16
+1163 IF P(30)=-1 THEN P(30)=22
+1164 PRINT "You hear footsteps elsewhere in the cave";:UP=1:GOSUB 530:GOTO 180
+1170 IF N<>18 THEN 1220
 1180 PRINT"Full fathom five thy father lies;";:GOSUB 530:PRINT"Of his bones are coral made;";
 1190 GOSUB 530:PRINT"Those were pearls that were his eyes.";:GOSUB 530:PRINT"Nothing of hime that doth fade";:GOSUB 530
 1200 PRINT"But doth suffer a sea change.";:GOSUB 530:PRINT"Into something rich and strange...";:GOTO 911
 1210 '
 1220 '
 1230 FOR T=7 TO LEN(O$(N)):IF MID$(O$(N),T,1)<>"*" THEN NEXT
-1240 FOR X=T+1 TO LEN(O$(N)):PRINT MID$(O$(N),X,1);:IF POS(0)=60 THEN: GOSUB 530:NEXT :ELSE NEXT
+1235 Z$=MID$(O$(N),T+1,LEN(O$(N))-T):GOSUB 11
+1240 '
 1250 GOSUB 530
 1260 IF GS=1 THEN GS=0:GOTO 180 :ELSE 230
 1269 'WITH
@@ -249,6 +274,8 @@
 2048 INPUT#1,MT,TS
 2049 CLOSE 1:CLS
 2050 PRINT@0,"<"STRING$(22,"-")"LOST SHIP ADVENTURE"STRING$(21,"-")">":GOTO 170
+2100 'DEAD -- Play again?
+2110 INPUT"Play again?";A$:IF LEFT$(A$,1)="Y"THEN RUN :ELSE CLS:END
 4001 'Copyright (c) 2021 Charles Forsythe
 4002 '
 4003 'Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -267,4 +294,4 @@
 4016'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 4017'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 4018'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-4018'SOFTWARE.
+4019'SOFTWARE.
