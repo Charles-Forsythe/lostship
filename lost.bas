@@ -1,7 +1,7 @@
 10 CLEAR 1500 : M$ = "ABCABCABCABC" : GOTO 20
 11 'Print with line wrapping. Z$=string ZS=1 split scroll Z=2 no scroll
-13 ZL$="":IF POS(0) + LEN(Z$) < 64 THEN 16
-14 for T1 = (64-POS(0)) to 1 step -1:if MID$(Z$, T1, 1) <> " " then next t1:goto 16
+12 ZL$="":IF POS(0) + LEN(Z$) < 64 THEN 16
+13 for T1 = (64-POS(0)) to 1 step -1:if MID$(Z$, T1, 1) <> " " then next t1':GOTO 16
 15 ZL$ = RIGHT$(Z$, LEN(Z$) - T1):Z$ = LEFT$(Z$, T1)
 16 PRINT Z$;:IF ZS=2 and zl$="" THEN 18
 17 IF ZS = 1 then gosub 530 else print
@@ -19,22 +19,27 @@
 29 PRINT@0,STRING$(64,C);:PRINT@832,STRING$(64,C);:FORT=0TO13:PRINT@T*64,CHR$(C);:PRINT@T*64+63,CHR$(C);:NEXTT,X
 30 FOR T = 0 TO 11 : READ M : POKE T + (M2 * 256 + M1), M : NEXT : DATA 33, 128, 62, 17, 64, 62, 1, 128, 1, 237, 176, 201 
 90 CLS:R=24:O=30:AL=30
+91 WF$="With what? For example " + CHR$(34) + "WITH FEATHER" + CHR$(34)
+92 GOSUB 2400
 100 DIM ZL$(4):DIM RD$(R,2),OS$(3,2),DH$(R):IF PEEK(16396)=195 THEN D1=1:DEFUSR0=M2*256+M1 :ELSE POKE 16526,M1:POKE 16527,M2
 110 DIM O$(O),P(O):FOR T=1 TO 6:READ AD$(T):NEXT:I$="X":I=VARPTR(I$):POKE I+1,197:POKE I+2,63
 120 FOR T=1 TO 3:READ OS$(T,1),OS$(T,2):NEXT:READ VH$:READ VI$:VH$=VH$+VI$:VI$="":'Don't do load game GOTO 1880
-130 CLS:PRINT@768,CHR$(168)CHR$(176)CHR$(178)CHR$(191)CHR$(177)CHR$(176)CHR$(148)"  Lost Ship Adventure"
-140 PRINTCHR$(172)CHR$(144)" "CHR$(191)" "CHR$(160)CHR$(156)"  by Charles Forsythe":PRINT CHR$(130)STRING$(5,131)CHR$(129)
-150 'PRINT@0,"<"STRING$(22,"-")"Lost Ship Adventure"STRING$(21,"-")">"
-151 PRINT@0,STRING$(22,CHR$(131)) " Lost Ship Adventure "STRING$(21,CHR$(131))
-160 FOR T=1 TO R:READ RD$(T,1),RD$(T,2):NEXT:FOR T=1 TO O:READ O$(T),P(T):NEXT:FOR T=1 TO R:READ DH$:RD$(T,2)=DH$+RD$(T,2):NEXT:Y1=1
+150 '
+160 FOR T=1 TO R:READ RD$(T,1),RD$(T,2):PRINT CHR$(129);:NEXT
+161 FOR T=1 TO O:READ O$(T),P(T):PRINT CHR$(129);:NEXT
+162 FOR T=1 TO R:READ DH$:RD$(T,2)=DH$+RD$(T,2):PRINT CHR$(129);:NEXT:Y1=1
+164 READ HN:DIM HE$(HN):FOR T=1 TO HN:READ HE$(T):NEXT
+165 CLS:PRINT@704,CHR$(168)CHR$(176)CHR$(178)CHR$(191)CHR$(177)CHR$(176)CHR$(148)"  Lost Ship Adventure"
+166 PRINTCHR$(172)CHR$(144)" "CHR$(191)" "CHR$(160)CHR$(156)"  by Charles Forsythe":PRINT CHR$(130)STRING$(5,131)CHR$(129)
+167 PRINT "Type 'HELP' for help."
+169 PRINT@0,STRING$(22,CHR$(131)) " Lost Ship Adventure "STRING$(21,CHR$(131))
 170 PRINT@64,STRING$(255,32):PRINT:PRINT:PRINT@64,"";:z$=RD$(Y1,1):zs=0:gosub 11
 180 ZS=2:PRINT@(320),"You see: ";:FOR T=1 TO O:IF P(T)<>Y1 THEN 200
 190 FOR N=7 TO LEN(O$(T)):IF MID$(O$(T),N,1)="*" THEN Z$=MID$(O$(T),7,n-7):gosub 11 else next n
 191 PRINT"  ";
 200 NEXT T:IF PEEK(16416)=72 THEN PRINT"Nothing special"CHR$(30) :ELSE PRINT CHR$(30)
 210 PRINT@448,"Obvious exits: ";:FOR T=1 TO 6:IF MID$(RD$(Y1,2),T,1)="1" THEN PRINT AD$(T)" ";:NEXT :ELSE NEXT
-220 'PRINT@512,"<-------------------------------------------------------------->";
-221 PRINT@512, STRING$(64, CHR$(131));
+220 PRINT@512, STRING$(64, CHR$(131));
 230 PRINT@960,"---->";
 240 IF PEEK(14502)=3 THEN PRINT CHR$(15);:GOTO 1050 :ELSE PRINT CHR$(14);:FOR T=1 TO 20:A$=INKEY$:IF A$="" THEN NEXT :ELSE 260
 250 IF PEEK(14502)=3 THEN PRINT CHR$(15);:GOTO 1050 :ELSE PRINT CHR$(15);:FOR T=1 TO 20:A$=INKEY$:IF A$="" THEN NEXT:GOTO 240 :ELSE 260
@@ -53,20 +58,20 @@
 370 IF V$<> MID$(VH$,T,4) THEN NEXT:PRINT"I don't know how to "CHR$(34)LEFT$(I2$,NP-1)CHR$(34)" something.";:GOTO 911 :ELSE V=VAL(MID$(VH$,T+4,2)):VN=(T-1)/6+1
 380 N$=N$+STRING$(4-LEN(N$)," "):IF V=3 THEN 410 :ELSE IF VN=22 THEN 440
 385 if UP < 2 THEN 390 'ELSE the pirate is stalking you!
-386 UP = UP + 1:IF UP < 6 THEN 390
-387 PRINT "The undead pirate fires his pistol, hitting you in the heart. You die instantly.":GOTO 2200
+386 UP = UP + 1:IF UP<6 OR P(20)<>Y1 THEN 390
+387 Z$="The undead pirate fires his pistol, hitting you in the heart. You die instantly.":ZS=1:GOSUB 11:GOTO 2100
 390 IF N$="    "THEN N=0:GOTO 440 :ELSE IF N$="SUIT"THEN PRINT"You're wearing it and you can't reach the zipper.";:GOTO 911
 400 FOR T=1 TO O:IF N$<>LEFT$(O$(T),4) THEN NEXT:PRINT"I don't know what a "CHR$(34)MID$(I2$,NP+1)CHR$(34)" is.";:GOTO 911 :ELSE N=T:GOTO 420
 409 'GO
 410 if y1 = 8 and n$="STAI" print "The guard dog won't let you go that way.";:goto 911
 411 FOR T=7 TO LEN(RD$(Y1,2))STEP 2:IF LEFT$(N$,2)=MID$(RD$(Y1,2),T,2) THEN Y1=VAL(MID$(RD$(Y1,2),T+2,2)):ELSE NEXT:PRINT"You can't go that way yet...";:GOTO 911
 412 'NEW LOCATION
-413 IF UP>1 AND Y1>7 THEN PRINT "Somehow, the pirate is already there!";:P(20)=Y1:gosub 530
-415 IF UP=1 AND Y1=P(20) THEN PRINT "The pirate has risen, and he's holding a pistol!";:GOSUB 530
+413 IF UP>1 AND Y1>7 AND Y1<>14 AND Y1<>11 THEN PRINT "Somehow, the pirate is already there!";:P(20)=Y1:gosub 530
+415 IF UP=1 AND Y1=P(20) THEN PRINT "The pirate has risen, and he's holding a pistol!";:UP=2:GOSUB 530
 419 GOTO 170 'END OF GO
 420 FOR T=7 TO LEN(O$(N)):IF MID$(O$(N),T,1)<>"*"THEN NEXT
 430 IF MID$(O$(N),T-1,1)="s" AND MID$(O$(N),T-2,1)<>"s" THEN HM=2 :ELSE HM=1
-440 ON V GOTO 930,1110,170,1140,1270,1340,1440,1530,1050,1570,1620,1760,1830,900,910,920
+440 ON V GOTO 930,1110,170,1140,1270,1340,1440,1530,1050,1570,1620,1760,1830,900,910,920,2200
 450 IF Y1=1 OR Y1>7 THEN 480 :ELSE AL=AL-1:IF AL=0 THEN PRINT"You have run out of air in your tanks! You have drowned";:GOSUB 530:GOTO 2100
 460 IF AL=1 THEN PRINT"Your air gauge reads in the red!";:GOSUB 530:GOTO 480
 470 IF AL<10 THEN PRINT"Your air gauge reads in the yellow...";:GOSUB 530
@@ -78,8 +83,8 @@
 530 J=USR(I):PRINT@960,CHR$(30);:RETURN
 540 DATA NORTH, SOUTH, EAST, WEST, UP, DOWN
 550 DATA That's, Those are, is too much, are too many, that, those
-560 DATA GET 01DROP02GO  03EXAM04WITH05SET 06ENTE03GIVE07TAKE01PICK01CLIM03PLOT06BREA08INVE09READ04OPEN10UNLO10KILL11
-570 DATA STAB11CUT 11STOR12SAY 11SMAS08SEAR04MARK06SWIM03CATC13FOLL03JUMP03EAT 11DIVE03QUIT14SCOR15HELP16LOWE11SAIL11SING11FEED11CHIP08LOOK04
+560 DATA GET 01DROP02GO  03EXAM04WITH05SET 06ENTE03GIVE07TAKE01PICK01CLIM03PLOT06BREA08INVE09READ04OPEN10UNLO10KILL17
+570 DATA STAB17CUT 17STOR12SAY 11SMAS08SEAR04MARK06SWIM03CATC13FOLL03JUMP03EAT 11DIVE03QUIT14SCOR15HELP16LOWE11SAIL11SING11FEED11CHIP08LOOK04
 579 'Locations
 580 DATA You are floating above the water next to the side of a large ship. All the life rafts have been taken and the sails need repair.
 590 DATA DO02UP08OC02SH08, You are underwater beneath a ship of some sort, UP01SU01EA03WE04NO06SO06
@@ -91,7 +96,7 @@
 640 DATA NO09ST09OC01UN02DO01, You are in the captain's study. It is wet in here. A ladder goes through the ceiling.
 650 DATA UP11SO08LA11NE11, You are in the map room. The windows look out onto a secondary deck and then an endless ocean. The sea breeze comes through them.
 660 DATA NO08WI12, You are in the crow's nest. You see something that might be an island in the east., DO09LA09OF05
-670 DATA You are on a secondary deck in the stern of the ship. The windows of the map room overlook it.  The entrance to the cargo hold is here.
+670 DATA "You are on a secondary deck in the stern of the ship. The windows of the map room overlook it. The entrance to the cargo hold is here. Stairs once led to the main deck, but they have collapsed."
 680 DATA DO13HO13EN13WI10RO10MA10, You are in the cargo hold. Most of the old cargo has decayed., UP12TR12
 690 DATA You are swimming in a shallow area next to the ship.,UP08SH08BO08NO15, "You are on a beach next to the ocean. You can see the ship.",WA14OC14NO20
 700 DATA You are in the jungle. You see a cave entrance., NO22SO20EA21WE18CA22, You are in the jungle. You can't find a path!
@@ -123,11 +128,17 @@
 910 PRINT"You have"TS"treasures stored.";:IF TS=5 THEN GOSUB 530:PRINT "That's all there are.";
 911 GOSUB 530:GOTO 230
 919 'HELP
-920 PRINT"Try examining things.";:GOTO 911
+920 HI=HI+1:IF HI > HN THEN HI=1
+922 Z$=HE$(HI):ZS=1:GOSUB 11
+928 GOTO 230
 929 'GET
-930 IF N=7 AND Y1=11 PRINT"A seagull flies and hits you from behind. You fall into the";:GOSUB 530:PRINT"ocean and lose everything you are holding.";:GOSUB 530:FOR T=3 TO O:IF P(T)=1000 P(T)=6:NEXT:Y1=4:GOTO 170 :ELSE NEXT:Y1=4:GOTO170
-931 IF P(N)=1000 THEN PRINT"You have "OS$(3,HM)" already!";:GOTO 911
-932 IF P(N)<>Y1 THEN PRINT OS$(1,HM)" not here.";:GOTO 911
+930 IF N<>7 AND Y1=<>1 THEN 935
+931 PRINT"A seagull flies and hits you from behind. You fall into the";:GOSUB 530
+932 PRINT"ocean and lose everything you are holding.";:GOSUB 530
+933 FOR T=3 TO O:IF P(T)=1000 THEN P(T)=6
+934 NEXT:Y1=4:GOTO 170
+935 IF P(N)=1000 THEN PRINT"You have "OS$(3,HM)" already!";:GOTO 911
+936 IF P(N)<>Y1 THEN PRINT OS$(1,HM)" not here.";:GOTO 911
 940 IF N=19 THEN PRINT"It's too fat!";:GOTO 911
 950 IF N=4 OR N=20 THEN 1140
 960 IF N=21 AND LEFT$(O$(21),1)="R" THEN PRINT"It's a big rock!";:GOTO 911
@@ -150,7 +161,7 @@
 1139 'EXAM
 1140 IF P(N)<>Y1 AND P(N)<>1000 THEN PRINT OS$(1,HM)" not here.";:GOTO 911
 1141 IF N=7 THEN 930
-1142 IF N=20 AND P(30)=-1 THEN PRINT "There is something under him!";:GOSUB 530:P(30)=Y1:GOTO 180
+1142 IF N=20 AND P(30)=-1 THEN PRINT "There is something under him!";:GOSUB 530:P(30)=Y1:GOTO 1230
 1150 IF N=6 THEN O$(N)="PEN 02Pen*It's a pen!":GS=1
 1160 IF N<>21 OR LEFT$(O$(21),1)<>"R" THEN 1170
 1161 PRINT "On closer inspection, it's actually an crusty old chest.";:GOSUB 530
@@ -169,12 +180,18 @@
 1250 GOSUB 530
 1260 IF GS=1 THEN GS=0:GOTO 180 :ELSE 230
 1269 'WITH
-1270 IF N=11 AND Y1=7 AND P(5)=-1 THEN PRINT"You've uncovered something";:GOSUB 530:P(5)=7:GOTO 170
-1280 IF N=14 AND P(24)<>Y1 PRINT"They're not here.";:GOTO 911
-1290 IF N=14 AND OQ=5 PRINT"You have too much already.";:GOTO 911
-1300 IF N=14 AND P(14)<>1000 THEN PRINT"You don't have that.";:GOTO 911
-1310 IF N=11 AND Y1=7 PRINT"You've broken enough already.";:GOTO 911
-1320 IF N=14 THEN OQ=OQ+1:P(24)=1000:PRINT"O.K.";:GOSUB 530:GOTO 170
+1270 IF N<>11 THEN 1275
+1271 IF Y1=7 AND P(5)=-1 THEN PRINT"You've uncovered something";:GOSUB 530:P(5)=7:GOTO 170
+1272 IF Y1=7 PRINT"You've broken enough already.";:GOTO 911
+1273 IF P(20)<>Y1 THEN 1330
+1274 Z$="The dagger glows as it pluges into the pirate. The pirate vanishes in a flash of light.":ZS=1:GOSUB 11:UP=0:P(20)=-1:GOSUB 530:GOTO 170
+1275 IF N<>14 THEN 1310
+1280 IF P(24)<>Y1 PRINT"They're not here.";:GOTO 911
+1290 IF OQ=5 PRINT"You have too much already.";:GOTO 911
+1300 IF P(14)<>1000 THEN PRINT"You don't have that.";:GOTO 911
+1305 OQ=OQ+1:P(24)=1000:PRINT"O.K.";:GOSUB 530:GOTO 170
+1310 '
+1320 '
 1330 PRINT"It doesn't work.";:GOTO 911
 1339 'SET/PLOT
 1340 IF N=15 THEN 1400
@@ -190,7 +207,7 @@
 1439 'GIVE
 1440 IF Y1<>8 THEN 1480
 1450 IF P(N)<>1000 THEN PRINT"You don't have "OS$(3,HM)".";:GOTO 911
-1460 IF N<>5 THEN PRINT"O.K... nothing happens.";:OQ=OQ-1:GOSUB 530:P(N)=Y1:GOTO 180
+1460 IF N<>5 THEN PRINT"O.K... the dog doesn't have any interest in "OS$(3,HM)".";:OQ=OQ-1:GOSUB 530:P(N)=Y1:GOTO 170
 1470 P(5)=-1:z$="The dog takes the bones to the top of the stairs and begins gnawing them.":ZS=1:gosub 11:OQ=OQ-1
 1475 O$(4)="DOG 05Dog gnawing bones*It growls when you come near.":RD$(8,2)="110001NO09ST09UN02OC01RO10SO10DO01":GOTO 170
 1480 IF N<>24 OR Y1<>P(19) OR P(N)<>1000 THEN 1520
@@ -200,7 +217,7 @@
 1520 IF P(N)<>1000 THEN PRINT"You don't have "OS$(3,HM)".";:GOTO 911 :ELSE PRINT"O.K... nothing happens.";:OQ=OQ-1:GOSUB 530:P(N)=Y1:GOTO 180
 1529 'BREAK/CHIP
 1530 IF N=7 THEN 930
-1540 IF N=3 AND Y1=7 THEN PRINT"With what, i.e. "CHR$(34)"WITH FEATHER"CHR$(34);:GOTO 911
+1540 IF N=3 AND Y1=7 THEN PRINT WF$:GOTO911
 1550 IF N=3 THEN PRINT"It's not here.";:GOTO 911
 1560 PRINT"You can't break that.";:GOTO 911
 1569 'UNLOCK/OPEN
@@ -209,8 +226,8 @@
 1590 IF P(21)<>1000 AND P(21)<>Y1 THEN PRINT"It's not here.";:GOTO 911
 1600 IF P(22)<>1000 THEN PRINT"It's locked and you don't have anything to open it with!";:GOTO 911
 1610 PRINT"O.K.";:GOSUB 530:O$(21)="CHES03Open chest*It's full of gems.":GOTO 170
-1619 'KILL/STAB/SING/FEED/LOWE
-1620 IF VN=18 OR VN=19 OR VN=20 THEN PRINT"Don't be so destructive!";:GOTO 911
+1619 'SING/FEED/LOWE
+1620 '
 1630 IF VN<>22 THEN 1650 :ELSE PRINT CHR$(34);:FOR X=1 TO LEN(I2$):IF MID$(I2$,X,1)<>" " THEN NEXT:PRINT CHR$(34);:GOTO 911
 1640 FOR T=X+1 TO LEN(I2$):PRINT MID$(I2$,T,1);:NEXT:PRINT CHR$(34);:GOTO 911
 1650 IF VN=30 AND N=28 AND P(28)=1000 THEN P(N)=-1:PRINT"You feel sick.";:GOSUB 530:GOTO 180
@@ -232,13 +249,14 @@
 1800 IF VAL(MID$(O$(N),5,2))<>3 THEN PRINT OS$(1,HM)" not a treasure!";:GOTO 911
 1810 IF P(N)<>1000 THEN PRINT"You can't store something you don't have!";:GOTO 911
 1815 IF N<>21 THEN 1770
-1820 IF MID$(O$(21),7,1)<>"O"THEN PRINT"You're not sure it's a treasure, it could be full of dirt!";:GOTO 911 :ELSE 1770
+1820 IF MID$(O$(21),7,1)<>"O"THEN PRINT"You're not sure it's a treasure, it could be full of dirt, Geraldo!";:GOTO 911 :ELSE 1770
 1829 'CATCH
-1830 IF N=17 THEN PRINT"It's too big to catch.";:GOSUB 530
+1830 IF P(N)<>Y1 PRINT PRINT OS$(1,HM) " not here.";:GOTO 911
+1835 IF N=17 THEN PRINT"It's too big to catch.";:GOSUB 530
 1840 IF N=4 THEN PRINT"You try but it bites you.";:GOTO 911
 1850 IF N<>24 THEN PRINT"You can't catch "OS$(3,HM)".";:GOTO 911
-1860 IF Y1<>P(24) THEN PRINT"Those are not here.";:GOTO 911
-1870 PRINT"With what i.e. " CHR$(34) "WITH FEATHER"CHR$(34)".";:GOTO 911
+1860 '
+1870 PRINT WF$:GOTO911
 1880 PRINT@0,"<"STRING$(22,"-")"LOST SHIP ADVENTURE"STRING$(21,"-")">":PRINT:PRINTTAB(24) STRING$(17,176):PRINTTAB(24) CHR$(191)" 1) NEW GAME   "CHR$(191):PRINTTAB(24) CHR$(191)" 2) SAVED GAME "CHR$(191):PRINTTAB(24) STRING$(17,131)
 1890 '
 1900 '
@@ -275,7 +293,30 @@
 2049 CLOSE 1:CLS
 2050 PRINT@0,"<"STRING$(22,"-")"LOST SHIP ADVENTURE"STRING$(21,"-")">":GOTO 170
 2100 'DEAD -- Play again?
-2110 INPUT"Play again?";A$:IF LEFT$(A$,1)="Y"THEN RUN :ELSE CLS:END
+2110 GOSUB 530:INPUT"Play again";A$:IF LEFT$(A$,1)="Y" or LEFT$(A$,1)="y" THEN RUN :ELSE CLS:END
+2200 'KILL/STAB/CUT
+2210 IF P(N)<>Y1 THEN PRINT OS$(1,HM) " not here.";:GOTO 911
+2220 IF N<>20 THEN PRINT "Don't be so destructive!";:GOTO 911
+2230 IF UP<2 THEN PRINT "It's a little late for that...";:GOTO 911
+2240 PRINT WF$;:UP = UP - 1
+2250 GOTO 911
+2300 ' HELP STRINGS
+2310 DATA 5,Use two-word commands like 'GO NORTH' 'GET STEAK'
+2315 DATA You can do more than go in compass directions. Try 'CLIMB LADDER' 'SWIM OCEAN' 'GO STAIRS'.
+2320 DATA EXAMINE everything for clues
+2330 DATA Some items are treasure. Check your SCORE.
+2340 DATA "If you get lost, try dropping things like breadcrumbs. Make a map."
+2350 DATA Some treasures are useful. Don't STORE them too soon.
+2400 CLS:PRINT STRING$(22, " ") "LOST SHIP ADVENTURE":PRINT
+2410 PRINT "While diving for treasure in the Caribbean, you come across a"
+2420 PRINT "long-lost pirate ship, adrift for years.":PRINT
+2430 PRINT "To play, use two-word commands like 'GO NORTH' or 'GET STEAK'"
+2435 PRINT "Figuring out what commands you can use is part of the puzzle!"
+2436 PRINT "Just use common sense.":PRINT
+2440 PRINT "To get a list of what you have, type 'INVENTORY'."
+2450 PRINT "You can press SHIFT-I to get a quick INVENTORY"
+2460 PRINT:PRINT STRING$(19, " ") "- PRESS ENTER TO START -"
+2490 IF INKEY$<>CHR$(13) THEN 2490 ELSE PRINT "Setting up game":RETURN
 4001 'Copyright (c) 2021 Charles Forsythe
 4002 '
 4003 'Permission is hereby granted, free of charge, to any person obtaining a copy
